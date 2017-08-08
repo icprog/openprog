@@ -9,6 +9,6 @@
 int main() {
 
 	at89s.prog=&vnpro;
-	at89s.ReadFlash("AT89S52", NULL);
+	at89s.ReadFlash("AT89S52", "read.bin");
 	return 0;
 }

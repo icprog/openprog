@@ -12,7 +12,8 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	//cap phat bo nho
 	uint8_t i, partIndex;
 	uint8_t n;
-	uint16_t u16FlashSize;
+	uint16_t u16FlashSize, u16NumOfPack;
+	uint16_t j;
 	
 	n=sizeof(partList)/sizeof(AT89S_Part);
 
@@ -66,12 +67,29 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	printf("Check ID: %02X %02X %02X: OKAY\n", u8ID[0], u8ID[1], u8ID[2]);
 	
 	//doc flash tu MCU
-	if(prog->ReadFlashAT89S(0x0000, 64, buff)) {
-		printf("Doc flash loi\n");
-	} else {
-		printf("%02X %02X %02X %02X\n", buff[0], buff[1], buff[2], buff[3]);
+	u16NumOfPack=u16FlashSize/64;
+	printf("Read Flash:\n");
+	for(j=0; j<u16NumOfPack; ++j) {
+		if(prog->ReadFlashAT89S(j*64, 64, &buff[j*64])) {
+			printf("Read Flash at: %04X ERROR\n", j*64);
+			free(buff);
+			return;
+		}
+		printf(".");
+		fflush(stdout);
 	}
-	
+
+	//ghi du lieu ra file
+	FILE *f;
+	f=fopen(szFile, "wb");
+	if(f==NULL) {
+		printf("Create file ERROR\n");
+		free(buff);
+		return;
+	}
+	fwrite(buff, 1, u16FlashSize, f);
+	fclose(f);
+	free(buff);
 }
 void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 
