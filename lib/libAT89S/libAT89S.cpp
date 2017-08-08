@@ -65,6 +65,12 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 
 	printf("Check ID: %02X %02X %02X: OKAY\n", u8ID[0], u8ID[1], u8ID[2]);
 	
+	//doc flash tu MCU
+	if(prog->ReadFlashAT89S(0x0000, 64, buff)) {
+		printf("Doc flash loi\n");
+	} else {
+		printf("%02X %02X %02X %02X\n", buff[0], buff[1], buff[2], buff[3]);
+	}
 	
 }
 void myAT89S::WriteFlash(char *szPartName, char *szFile) {
