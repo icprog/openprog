@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "libAT89S.h"
 
 AT89S_Part partList[]={
@@ -10,11 +11,15 @@ AT89S_Part partList[]={
 
 void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	//cap phat bo nho
-	uint8_t i, partIndex;
-	uint8_t n;
+	uint16_t i, partIndex, k;
+	uint16_t n;
 	uint16_t u16FlashSize, u16NumOfPack;
 	uint16_t j;
 	
+	printf("*------------------------------------------------*\n");
+	printf("Part: %s\n", szPartName);
+	printf("*------------------------------------------------*\n");
+
 	n=sizeof(partList)/sizeof(AT89S_Part);
 
 	for(i=0; i<n; ++i) {
@@ -65,19 +70,38 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	}
 
 	printf("Check ID: %02X %02X %02X: OKAY\n", u8ID[0], u8ID[1], u8ID[2]);
-	
+	printf("*------------------------------------------------*\n");
+
 	//doc flash tu MCU
 	u16NumOfPack=u16FlashSize/64;
 	printf("Read Flash:\n");
+
+	//them phan hien thi tien trinh doc
+	i=1;
+	for(k=0; k<50; ++k) {
+		printf(".");
+	}
+	fflush(stdout);
 	for(j=0; j<u16NumOfPack; ++j) {
 		if(prog->ReadFlashAT89S(j*64, 64, &buff[j*64])) {
 			printf("Read Flash at: %04X ERROR\n", j*64);
 			free(buff);
 			return;
 		}
-		printf(".");
-		fflush(stdout);
+		if((i*u16NumOfPack/50)==j) {
+			++i;
+			printf("\r");
+			for(k=0; k<i; ++k) {
+				printf("#");
+			}
+			for(k=i; k<50; ++k) {
+				printf(".");
+			}
+			fflush(stdout);
+		}
 	}
+	printf("\n");
+	printf("*------------------------------------------------*\n");
 
 	//ghi du lieu ra file
 	FILE *f;
@@ -89,10 +113,127 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	}
 	fwrite(buff, 1, u16FlashSize, f);
 	fclose(f);
+	printf("Write Flash to file: %s\n", szFile);
 	free(buff);
 }
 void myAT89S::WriteFlash(char *szPartName, char *szFile) {
+	//cap phat bo nho
+	uint16_t i, partIndex, k;
+	uint16_t n;
+	uint16_t u16FlashSize, u16NumOfPack;
+	uint16_t j;
+	
+	printf("*------------------------------------------------*\n");
+	printf("Part: %s\n", szPartName);
+	printf("*------------------------------------------------*\n");
 
+	n=sizeof(partList)/sizeof(AT89S_Part);
+
+	for(i=0; i<n; ++i) {
+		if(strcmpi(szPartName, partList[i].szName)==0) {
+			u16FlashSize=partList[i].u16FlashSize;
+			partIndex=i;
+			break;
+		}
+	}
+	if(i==n) {
+		printf("Error part\n");
+		return;
+	}
+
+	//cap phat bo nho
+	uint8_t *buff, *buffread;
+	buff=(uint8_t*)malloc(u16FlashSize);
+	buffread=(uint8_t*)malloc(u16FlashSize);
+	memset(buff, 0xFF, u16FlashSize);
+	memset(buffread, 0xFF, u16FlashSize);
+	//khoi tao programmer
+	if(prog->Init()) {
+		printf("Init Programmer: Error\n");
+		free(buff);
+		return;
+	}
+
+	if(ChipEnable()) {
+		printf("Chip Enable: ERROR\n");
+		free(buff);
+		return;
+	}
+
+
+	//kiem tra ID
+	uint8_t u8ID[3];
+
+	if(ReadID(u8ID)) {
+		printf("Read ID: ERROR\n");
+		free(buff);
+		return;
+	}
+
+	for(i=0; i<3; ++i) {
+		if(partList[partIndex].ID[i]!=u8ID[i]) {
+			printf("Check ID: ERROR\n");
+			free(buff);
+			return;
+		}
+	}
+
+	printf("Check ID: %02X %02X %02X: OKAY\n", u8ID[0], u8ID[1], u8ID[2]);
+	printf("*------------------------------------------------*\n");
+
+	//xoa chip
+	printf("Erase\n");
+	fflush(stdout);
+	ChipErase();
+	printf("*------------------------------------------------*\n");
+	fflush(stdout);
+
+	FILE *f;
+	f=fopen(szFile, "rb");
+	if(f==NULL) {
+		printf("Open file ERROR\n");
+		free(buff);
+		return;
+	}
+
+	fread(buff, 1, u16FlashSize, f);
+	fclose(f);
+
+	//doc flash tu MCU
+	u16NumOfPack=u16FlashSize/32;
+	printf("Write Flash:\n");
+
+	//them phan hien thi tien trinh doc
+	i=1;
+	for(k=0; k<50; ++k) {
+		printf(".");
+	}
+	fflush(stdout);
+	for(j=0; j<u16NumOfPack; ++j) {
+		if(prog->WriteFlashAT89S(j*32, 32, &buff[j*32])) {
+			printf("Write Flash at: %04X ERROR\n", j*32);
+			free(buff);
+			free(buffread);
+			return;
+		}
+		if((i*u16NumOfPack/50)==j) {
+			++i;
+			printf("\r");
+			for(k=0; k<i; ++k) {
+				printf("#");
+			}
+			for(k=i; k<50; ++k) {
+				printf(".");
+			}
+			fflush(stdout);
+		}
+	}
+	printf("\n");
+	printf("*------------------------------------------------*\n");
+	
+	printf("Write Flash: OKAY\n");
+	free(buff);
+	free(buffread);
 }
 void myAT89S::ReadLock(char *szPartName, char *szFile) {
 
@@ -148,4 +289,14 @@ uint32_t myAT89S::ReadID(uint8_t *pu8ID) {
 	pu8ID[2]=buff[3];
 
 	return 0;
+}
+
+void myAT89S::ChipErase() {
+	uint8_t buff[64];
+	buff[0]=0xAC;
+	buff[1]=0x80;
+	buff[2]=0x00;
+	buff[3]=0x00;
+	prog->Spi(4, buff);
+	usleep(500*1000);
 }
