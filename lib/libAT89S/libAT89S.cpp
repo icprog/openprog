@@ -244,9 +244,54 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 		}
 	}
 	printf("\n");
-	printf("*------------------------------------------------*\n");
+	//printf("*------------------------------------------------*\n");
 	
 	printf("Write Flash: OKAY\n");
+
+	printf("*------------------------------------------------*\n");
+
+	//doc lai flash de kiem tra
+	//doc flash tu MCU
+	u16NumOfPack=u16FlashSize/64;
+	printf("Read Flash:\n");
+
+	//them phan hien thi tien trinh doc
+	i=1;
+	for(k=0; k<50; ++k) {
+		printf(".");
+	}
+	fflush(stdout);
+	for(j=0; j<u16NumOfPack; ++j) {
+		if(prog->ReadFlashAT89S(j*64, 64, &buffread[j*64])) {
+			printf("Read Flash at: %04X ERROR\n", j*64);
+			free(buff);
+			free(buffread);
+			prog->Exit();
+			return;
+		}
+		if((i*u16NumOfPack/50)==j) {
+			++i;
+			printf("\r");
+			for(k=0; k<i; ++k) {
+				printf("#");
+			}
+			for(k=i; k<50; ++k) {
+				printf(".");
+			}
+			fflush(stdout);
+		}
+	}
+	printf("\n");
+	printf("Read Flash: OKAY\n");
+	printf("*------------------------------------------------*\n");
+
+	if(memcmp(buff, buffread, u16FlashSize)) {
+		printf("Verify: ERROR\n");
+	} else {
+		printf("Verify: OKAY\n");
+	}
+
+
 	free(buff);
 	free(buffread);
 	prog->Exit();
