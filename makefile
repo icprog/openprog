@@ -1,4 +1,4 @@
-PROJECT = vnop
+PROJECT = openprog
 CC = g++
 
 OS_32_64 = OS_32_BIT
