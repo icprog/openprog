@@ -1,4 +1,4 @@
 #include "global.h"
 
-myProgrammer vnpro;
+PgmVnpro vnpro;
 myAT89S at89s;

@@ -8,6 +8,7 @@ LIB += libUSBHID
 LIB += libBOOT
 LIB += libProgrammer
 LIB += libAT89S
+LIB += libPgmVnpro
 
 TINCS = 
 TINCS += src

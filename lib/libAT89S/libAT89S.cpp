@@ -23,7 +23,7 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	n=sizeof(partList)/sizeof(AT89S_Part);
 
 	for(i=0; i<n; ++i) {
-		if(strcmpi(szPartName, partList[i].szName)==0) {
+		if(strcmp(szPartName, partList[i].szName)==0) {
 			u16FlashSize=partList[i].u16FlashSize;
 			partIndex=i;
 			break;
@@ -48,6 +48,7 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	if(ChipEnable()) {
 		printf("Chip Enable: ERROR\n");
 		free(buff);
+		prog->Exit();
 		return;
 	}
 
@@ -58,6 +59,7 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	if(ReadID(u8ID)) {
 		printf("Read ID: ERROR\n");
 		free(buff);
+		prog->Exit();
 		return;
 	}
 
@@ -65,6 +67,7 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 		if(partList[partIndex].ID[i]!=u8ID[i]) {
 			printf("Check ID: ERROR\n");
 			free(buff);
+			prog->Exit();
 			return;
 		}
 	}
@@ -86,6 +89,7 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 		if(prog->ReadFlashAT89S(j*64, 64, &buff[j*64])) {
 			printf("Read Flash at: %04X ERROR\n", j*64);
 			free(buff);
+			prog->Exit();
 			return;
 		}
 		if((i*u16NumOfPack/50)==j) {
@@ -109,12 +113,14 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	if(f==NULL) {
 		printf("Create file ERROR\n");
 		free(buff);
+		prog->Exit();
 		return;
 	}
 	fwrite(buff, 1, u16FlashSize, f);
 	fclose(f);
 	printf("Write Flash to file: %s\n", szFile);
 	free(buff);
+	prog->Exit();
 }
 void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 	//cap phat bo nho
@@ -130,7 +136,7 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 	n=sizeof(partList)/sizeof(AT89S_Part);
 
 	for(i=0; i<n; ++i) {
-		if(strcmpi(szPartName, partList[i].szName)==0) {
+		if(strcmp(szPartName, partList[i].szName)==0) {
 			u16FlashSize=partList[i].u16FlashSize;
 			partIndex=i;
 			break;
@@ -157,6 +163,8 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 	if(ChipEnable()) {
 		printf("Chip Enable: ERROR\n");
 		free(buff);
+		free(buffread);
+		prog->Exit();
 		return;
 	}
 
@@ -167,6 +175,8 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 	if(ReadID(u8ID)) {
 		printf("Read ID: ERROR\n");
 		free(buff);
+		free(buffread);
+		prog->Exit();
 		return;
 	}
 
@@ -174,6 +184,8 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 		if(partList[partIndex].ID[i]!=u8ID[i]) {
 			printf("Check ID: ERROR\n");
 			free(buff);
+			free(buffread);
+			prog->Exit();
 			return;
 		}
 	}
@@ -193,6 +205,8 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 	if(f==NULL) {
 		printf("Open file ERROR\n");
 		free(buff);
+		free(buffread);
+		prog->Exit();
 		return;
 	}
 
@@ -214,6 +228,7 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 			printf("Write Flash at: %04X ERROR\n", j*32);
 			free(buff);
 			free(buffread);
+			prog->Exit();
 			return;
 		}
 		if((i*u16NumOfPack/50)==j) {
@@ -234,6 +249,7 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 	printf("Write Flash: OKAY\n");
 	free(buff);
 	free(buffread);
+	prog->Exit();
 }
 void myAT89S::ReadLock(char *szPartName, char *szFile) {
 
