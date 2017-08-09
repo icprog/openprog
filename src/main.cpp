@@ -13,7 +13,6 @@ int main(int argc, char **argv)
 	uint8_t pFlag=0, rFlag=0, wFlag=0, fFlag=0;
 	
 	if(argc!=7) {
-		printf("1\n");
 		printf("Use same as: openprog -p AT89S52 -r FLASH -f blink.bin\n");
 		return 1;
 	}
@@ -46,13 +45,11 @@ int main(int argc, char **argv)
 	at89s.prog=&vnpro;
 
 	if( (0==pFlag) || (0==fFlag) ) {
-		printf("2\n");
 		printf("Use same as: openprog -p AT89S52 -r FLASH -f blink.bin\n");
 		return 1;
 	}
 
 	if((0==rFlag) && (0==wFlag)) {
-		printf("3\n");
 		printf("Use same as: openprog -p AT89S52 -r FLASH -f blink.bin\n");
 		return 1;
 	}

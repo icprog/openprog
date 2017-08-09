@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "libAT89S.h"
+#include "libHexFile.h"
 
 AT89S_Part partList[]={
 	{"AT89S51", {0x1E, 0x51, 0x06}, 4*1024}, \
@@ -108,16 +109,32 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	printf("*------------------------------------------------*\n");
 
 	//ghi du lieu ra file
-	FILE *f;
-	f=fopen(szFile, "wb");
-	if(f==NULL) {
-		printf("Create file ERROR\n");
-		free(buff);
-		prog->Exit();
-		return;
+	//kiem tra xem file hex hay file BIN
+	uint16_t u16Len;
+	u16Len=strlen(szFile);
+
+	if(strcmp(&szFile[u16Len-4], ".hex")==0) {
+		//HEX file
+
+		printf("File Type: hex file\n");
+		HexFile hex;
+		hex.SetFlashSize(u16FlashSize);
+		hex.WriteBuffToFile(szFile, buff);
+	} else {
+		//bin file
+		printf("File Type: bin file\n");
+		FILE *f;
+		f=fopen(szFile, "wb");
+		if(f==NULL) {
+			printf("Create file ERROR\n");
+			free(buff);
+			prog->Exit();
+			return;
+		}
+		fwrite(buff, 1, u16FlashSize, f);
+		fclose(f);
 	}
-	fwrite(buff, 1, u16FlashSize, f);
-	fclose(f);
+	
 	printf("Write Flash to file: %s\n", szFile);
 	free(buff);
 	prog->Exit();
@@ -200,18 +217,36 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 	printf("*------------------------------------------------*\n");
 	fflush(stdout);
 
-	FILE *f;
-	f=fopen(szFile, "rb");
-	if(f==NULL) {
-		printf("Open file ERROR\n");
-		free(buff);
-		free(buffread);
-		prog->Exit();
-		return;
+	uint16_t u16Len;
+	u16Len=strlen(szFile);
+
+	if(strcmp(&szFile[u16Len-4], ".hex")==0) {
+		HexFile hex;
+		hex.SetFlashSize(u16FlashSize);
+		if(hex.ReadFileToBuff(szFile, buff)) {
+			printf("Read file ERROR\n");
+			free(buff);
+			free(buffread);
+			prog->Exit();
+			return;
+		}
+		//hex.WriteBuffToFile("bb.hex", buff);
+	} else {
+		FILE *f;
+		f=fopen(szFile, "rb");
+		if(f==NULL) {
+			printf("Open file ERROR\n");
+			free(buff);
+			free(buffread);
+			prog->Exit();
+			return;
+		}
+
+		fread(buff, 1, u16FlashSize, f);
+		fclose(f);
 	}
 
-	fread(buff, 1, u16FlashSize, f);
-	fclose(f);
+	
 
 	//doc flash tu MCU
 	u16NumOfPack=u16FlashSize/32;

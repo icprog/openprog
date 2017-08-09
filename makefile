@@ -9,6 +9,7 @@ LIB += libBOOT
 LIB += libProgrammer
 LIB += libAT89S
 LIB += libPgmVnpro
+LIB += libHexFile
 
 TINCS = 
 TINCS += src
