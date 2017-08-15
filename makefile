@@ -5,6 +5,7 @@ OS_32_64 = OS_32_BIT
 
 LIB = 
 LIB += libUSBHID
+LIB += libUSBBULK
 LIB += libBOOT
 LIB += libProgrammer
 LIB += libAT89S

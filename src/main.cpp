@@ -8,6 +8,7 @@
 int main(int argc, char **argv)
 {
 	
+	
 	int c;
 	char *pValue, *rValue, *wValue, *fValue;
 	uint8_t pFlag=0, rFlag=0, wFlag=0, fFlag=0;
@@ -68,6 +69,7 @@ int main(int argc, char **argv)
 	//at89s.prog=&vnpro;
 	//at89s.WriteFlash("AT89S52", "write.bin");
 	//at89s.ReadFlash("AT89S52", "read.bin");
+	
 	return 0;
 }
 
