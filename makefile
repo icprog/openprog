@@ -10,6 +10,7 @@ LIB += libBOOT
 LIB += libProgrammer
 LIB += libAT89S
 LIB += libPgmVnpro
+LIB += libPgmUsbIsp
 LIB += libHexFile
 
 TINCS = 

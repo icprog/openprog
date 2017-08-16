@@ -79,3 +79,33 @@ uint32_t myUSBHID::Write(uint16_t len, void *pData) {
 	}
 	return 1;
 }
+
+uint32_t myUSBHID::hid_send_feature_report(uint8_t u8Len, uint8_t *u8Buff) {
+	int res;
+	res = libusb_control_transfer(hUsb,
+		LIBUSB_REQUEST_TYPE_CLASS|LIBUSB_RECIPIENT_INTERFACE|LIBUSB_ENDPOINT_OUT,
+		0x09/*HID set_report*/,
+		(3/*HID feature*/ << 8) | u8Buff[0],
+		1,
+		(unsigned char *)u8Buff, u8Len,
+		5000/*timeout millis*/);
+	if(res<0) {
+		return 1;
+	}
+	return 0;
+}
+
+uint32_t myUSBHID::hid_get_feature_report(uint8_t u8Len, uint8_t *u8Buff) {
+	int res;
+	res = libusb_control_transfer(hUsb,
+		LIBUSB_REQUEST_TYPE_CLASS|LIBUSB_RECIPIENT_INTERFACE|LIBUSB_ENDPOINT_IN,
+		0x01/*HID get_report*/,
+		(3/*HID feature*/ << 8) | u8Buff[0],
+		1,
+		(unsigned char *)u8Buff, u8Len,
+		5000/*timeout millis*/);
+	
+	if (res < 0)
+		return 1;
+	return 0;
+}

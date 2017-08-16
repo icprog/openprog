@@ -11,5 +11,7 @@ public:
 	uint32_t Read(uint16_t len, void *pData);
 	uint32_t Write(void *pData);
 	uint32_t Write(uint16_t len, void *pData);
+	uint32_t hid_send_feature_report(uint8_t u8Len, uint8_t *u8Buff);
+	uint32_t hid_get_feature_report(uint8_t u8Len, uint8_t *u8Buff);
 };
 #endif
