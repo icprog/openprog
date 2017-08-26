@@ -10,20 +10,24 @@ int main(int argc, char **argv)
 
 #if 1	
 	int c;
-	char *pValue, *rValue, *wValue, *fValue;
-	uint8_t pFlag=0, rFlag=0, wFlag=0, fFlag=0;
+	char *prog, *pValue, *rValue, *wValue, *fValue;
+	uint8_t cFlag=0, pFlag=0, rFlag=0, wFlag=0, fFlag=0;
 	
-	if(argc!=7) {
-		printf("Use same as: openprog -p AT89S52 -r FLASH -f blink.bin\n");
+	if(argc!=9) {
+		printf("Use same as: openprog -c VNPRO -p AT89S52 -r FLASH -f blink.bin\n");
 		return 1;
 	}
 
 	while(1) {
-		c=getopt(argc, argv, "p:r:w:f:");
+		c=getopt(argc, argv, "c:p:r:w:f:");
 		if(c==-1) {
 			break;
 		}
 		switch(c) {
+			case 'c':
+				cFlag=1;
+				prog=optarg;
+				break;
 			case 'p':
 				pFlag=1;
 				pValue=optarg;
@@ -43,15 +47,28 @@ int main(int argc, char **argv)
 		}
 	}
 
-	at89s.prog=&vnpro;
+	if(cFlag==0) {
+		printf("Use same as: openprog -c VNPRO -p AT89S52 -r FLASH -f blink.bin\n");
+		return 1;
+	}
+
+	if(strcmp(prog, "USBISP")==0) {
+		at89s.prog=&usbisp;
+	} else if(strcmp(prog, "VNPRO")==0) {
+		at89s.prog=&vnpro;
+	} else {
+		printf("Use same as: openprog -c VNPRO -p AT89S52 -r FLASH -f blink.bin\n");
+		return 1;
+	}
+	
 
 	if( (0==pFlag) || (0==fFlag) ) {
-		printf("Use same as: openprog -p AT89S52 -r FLASH -f blink.bin\n");
+		printf("Use same as: openprog -c VNPRO -p AT89S52 -r FLASH -f blink.bin\n");
 		return 1;
 	}
 
 	if((0==rFlag) && (0==wFlag)) {
-		printf("Use same as: openprog -p AT89S52 -r FLASH -f blink.bin\n");
+		printf("Use same as: openprog -c VNPRO -p AT89S52 -r FLASH -f blink.bin\n");
 		return 1;
 	}
 

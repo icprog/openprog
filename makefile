@@ -13,6 +13,11 @@ LIB += libPgmVnpro
 LIB += libPgmUsbIsp
 LIB += libHexFile
 
+ifeq ($(OS),Windows_NT)
+LIB += hidapi
+endif
+
+
 TINCS = 
 TINCS += src
 TINCS += lib
@@ -37,9 +42,9 @@ VPATH += $(foreach dir,$(LIB),lib/$(dir))
 all: $(OBJ)
 ifeq ($(OS),Windows_NT)
 ifeq ($(OS_32_64),OS_32_BIT)
-	$(CC) -m32 $(OBJ) -L./lib/ -lusb-1.0_w32 -o $(PROJECT)
+	$(CC) -m32 $(OBJ) -L./lib/ -lusb-1.0_w32 -lsetupapi -o $(PROJECT)
 else
-	$(CC) -m64 $(OBJ) -L./lib/ -lusb-1.0_w64 -o $(PROJECT)
+	$(CC) -m64 $(OBJ) -L./lib/ -lusb-1.0_w64 -lsetupapi -o $(PROJECT)
 endif	
 else
 	$(CC) $(OBJ) -lusb-1.0 -o $(PROJECT)

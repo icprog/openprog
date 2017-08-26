@@ -4,12 +4,12 @@
 
 #include "libProgrammer.h"
 
-#include "libUSBHID.h"
+#include "hidapi.h"
 
 class PgmUsbIsp: public myProgrammer {
 private:
-	myUSBHID myUsb;
-	uint8_t buff[0x88];
+	hid_device *hHid;
+	uint8_t buff[512];
 public:
 	virtual uint32_t Init();
 	virtual uint32_t Exit();

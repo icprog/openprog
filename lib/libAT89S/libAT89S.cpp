@@ -116,13 +116,13 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 	if(strcmp(&szFile[u16Len-4], ".hex")==0) {
 		//HEX file
 
-		printf("File Type: hex file\n");
+		//printf("File Type: hex file\n");
 		HexFile hex;
 		hex.SetFlashSize(u16FlashSize);
 		hex.WriteBuffToFile(szFile, buff);
 	} else {
 		//bin file
-		printf("File Type: bin file\n");
+		//printf("File Type: bin file\n");
 		FILE *f;
 		f=fopen(szFile, "wb");
 		if(f==NULL) {
@@ -134,8 +134,11 @@ void myAT89S::ReadFlash(char *szPartName, char *szFile) {
 		fwrite(buff, 1, u16FlashSize, f);
 		fclose(f);
 	}
-	
-	printf("Write Flash to file: %s\n", szFile);
+	printf("OpenProg by Ngo Hung Cuong\n");
+	printf("http://ngohungcuong.com\n");
+	printf("ngohungcuong@gmail.com\n");
+	printf("0989696971 - 0915696971\n");
+	//printf("Write Flash to file: %s\n", szFile);
 	free(buff);
 	prog->Exit();
 }
