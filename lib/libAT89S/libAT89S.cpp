@@ -328,8 +328,13 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 	} else {
 		printf("Verify: OKAY\n");
 	}
-
-
+	
+	printf("*------------------------------------------------*\n");
+	printf("OpenProg by Ngo Hung Cuong\n");
+	printf("http://ngohungcuong.com\n");
+	printf("ngohungcuong@gmail.com\n");
+	printf("0989696971 - 0915696971\n");
+	
 	free(buff);
 	free(buffread);
 	prog->Exit();

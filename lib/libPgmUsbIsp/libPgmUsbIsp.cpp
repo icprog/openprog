@@ -171,26 +171,37 @@ uint32_t PgmUsbIsp::ReadFlashAT89S(uint16_t u16Addr, uint8_t u8Len, uint8_t *pu8
 
 	return 1;
 }
+
+static uint8_t num;
+
 uint32_t PgmUsbIsp::WriteFlashAT89S(uint16_t u16Addr, uint8_t u8Len, uint8_t *pu8Buff) {
-	/*
-	buff[0]=WRITE_FLASH_CMD;
-	buff[1]=u8Len;
-	buff[2]=(uint8_t)(u16Addr>>8);
-	buff[3]=(uint8_t)(u16Addr);
-	uint8_t i;
-	for(i=0; i<u8Len; ++i) {
-		buff[4+i]=pu8Buff[i];
-	}
-	if(myUsb.Write(buff)) {
-		if(myUsb.Read(buff)) {
-			if(buff[0]) {
+	if((u16Addr%128)==0) {
+		buff[0]=2;
+		buff[1]=(uint8_t)u16Addr;//dia chi thap
+		buff[2]=(uint8_t)(u16Addr>>8);//dia chi cao
+		buff[3]=0x00;
+		buff[4]=0x00;
+		buff[5]=0x80;
+		buff[6]=0x00;
+		buff[7]=0x01;
+		num=1;
+		//luu lai du lieu flash
+		memmove(&buff[8+(num-1)*32], pu8Buff, 32);
+		return 0;
+	} else {
+		//luu lai du lieu flash
+		++num;
+		memmove(&buff[8+(num-1)*32], pu8Buff, 32);
+		if(num==4) {
+			if(/*myUsb.*/hid_send_feature_report(hHid, buff, 136)==0) {
+				//myUsb.CloseDevice();
+				hid_close(hHid);
+				//printf("Send Feature: ERRORRRR\n");
 				return 1;
 			}
-			return 0;
-		} else {
-			return 1;
 		}
+		return 0;
 	}
-	*/
+
 	return 1;
 }
