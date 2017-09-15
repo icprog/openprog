@@ -1,7 +1,12 @@
 #include "libPgmUsbIsp.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#ifdef __linux__
+#else
 #include <mem.h>
+#endif
 
 #define VID 0x03EB
 #define PID 0xC8B4

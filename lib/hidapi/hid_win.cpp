@@ -1,3 +1,4 @@
+#ifndef __linux__
 /*******************************************************
  HIDAPI - Multi-Platform library for
  communication with HID devices.
@@ -870,4 +871,5 @@ int __cdecl main(int argc, char* argv[])
 
 #ifdef __cplusplus
 } // extern "C"
+#endif
 #endif
