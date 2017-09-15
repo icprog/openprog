@@ -12,10 +12,11 @@ LIB += libAT89S
 LIB += libPgmVnpro
 LIB += libPgmUsbIsp
 LIB += libHexFile
-
-ifeq ($(OS),Windows_NT)
 LIB += hidapi
-endif
+
+#ifeq ($(OS),Windows_NT)
+#LIB += hidapi
+#endif
 
 
 TINCS = 
