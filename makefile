@@ -48,7 +48,7 @@ else
 	$(CC) -m64 $(OBJ) -L./lib/ -lusb-1.0_w64 -lsetupapi -o $(PROJECT)
 endif	
 else
-	$(CC) $(OBJ) -lusb-1.0 -o $(PROJECT)
+	$(CC) $(OBJ) -lusb-1.0 -ludev -o $(PROJECT)
 endif
 
 obj/%.o: %.cpp
