@@ -51,11 +51,17 @@ uint32_t HexFile::Process_Line(char *szLine) {
 	char szpLine[200];
 	strcpy(szpLine,szLine);
 	n=strlen(szpLine);
+	
+	while((szpLine[n-1]==0x0A)||(szpLine[n-1]==0x0D)) {
+		szpLine[n-1]=0;
+		--n;
+	}
+	/*
 	if(szpLine[n-1]=='\n') {
 		szpLine[n-1]=0;
 		--n;
 	}
-
+	*/
 	//printf("%s\n", szLine);
 
 	//lay do dai cua xau
