@@ -57,7 +57,9 @@ int main(int argc, char **argv)
 		at89s.prog=&usbisp;
 	} else if(strcmp(prog, "VNPRO")==0) {
 		at89s.prog=&vnpro;
-	} else {
+	} else if(strcmp(prog, "ISPV2")==0) {
+		at89s.prog=&ispv2;
+	}else {
 		printf("Use same as: openprog -c VNPRO -p AT89S52 -r FLASH -f blink.bin\n");
 		return 1;
 	}
