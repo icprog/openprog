@@ -11,6 +11,7 @@ LIB += libProgrammer
 LIB += libAT89S
 LIB += libPgmVnpro
 LIB += libPgmUsbIsp
+LIB += libPgmISPv2
 LIB += libHexFile
 LIB += hidapi
 

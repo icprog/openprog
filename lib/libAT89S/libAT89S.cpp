@@ -177,6 +177,7 @@ void myAT89S::WriteFlash(char *szPartName, char *szFile) {
 	if(prog->Init()) {
 		printf("Init Programmer: Error\n");
 		free(buff);
+		free(buffread);
 		return;
 	}
 
