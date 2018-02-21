@@ -1,5 +1,7 @@
 #include "libPgmISPv2.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 uint32_t PgmISPv2::Init() {
 	if(myUsb.FindDevice(ISPV2_VID, ISPV2_PID)) {
